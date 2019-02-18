@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './Header.css'
-import {withRouter, Link, Route} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import PropTypes from 'prop-types';
 
 
@@ -15,7 +15,7 @@ class Header extends React.Component{
     }
 
     render(){  
-        console.log('path=' + this.context.router.route.location.pathname);
+        
         let isActive = this.props.history.location.pathname === "/";
         var homeActive = isActive ? 'active' : '';
         

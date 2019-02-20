@@ -44,21 +44,8 @@ export default class TableListing extends React.Component {
             var tableref = db.collection('tables').add({
                 active: true,
                 number: Number(tableNumber),
-                orders: [
-                    {
-                        name: "Bach Tuoc",
-                        price: 20,
-                        quantity: 4,
-                        subtotal: 80
-                    },
-                    {
-                        name: "Thit Nuong",
-                        price: 10,
-                        quantity: 4,
-                        subtotal: 40
-                    }
-                ],
-                total: 230,
+                orders: [],
+                total: 0,
                 checkin: firebase.firestore.Timestamp.fromDate(new Date()),
                 checkout: null
             })
@@ -71,10 +58,15 @@ export default class TableListing extends React.Component {
         //this.getTablesData();
     }
 
+
+
     getTablesData = () => {
+        
         const db = firebase.firestore();
         var tableref = db.collection('tables').where('active','==',true)
             .onSnapshot(querySnapshot => {
+                this.setState({loading: true})
+                this.tables.length = 0;
             querySnapshot.forEach((doc) => {
                 //console.log(doc.id, '=>', doc.data());
                 var data ={

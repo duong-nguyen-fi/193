@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -26,6 +27,23 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Bach tuoc 193</title>
+    <script>
+        
+    function promptForNumberInput(callback){
+      window.promptResult = null;
+          bootbox.prompt({
+          title: "Nhap so luong",
+          inputType: 'number',
+          callback: (result) =>{
+              console.log(result);
+              callback(result);
+
+          }
+      });
+    }
+
+    
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -41,4 +59,5 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  
 </html>

@@ -12,6 +12,8 @@ class App extends Component {
         <div className="container">
           <Header location={this.props}/>
           <Route path='/' exact component={TableListing}  />
+          <Route path='/deleted' exact component={TableListing}  />
+          <Route path='/history' exact component={TableListing}  />
           <Route path='/detail/:id'  component={TableDetail} />
           
         </div>

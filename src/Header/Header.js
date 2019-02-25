@@ -9,17 +9,22 @@ class Header extends React.Component{
 
     detailOnClick = () =>{
         if(!this.props.history.location.pathname.includes('detail'))
-            this.props.history.goBack();
+            console.log(this.props.history);
         else
-            this.props.history.replace("/");
+        {
+            this.props.history.push("/");
+        }
+            
     }
 
     render(){  
         
-        let isActive = this.props.history.location.pathname === "/";
-        var homeActive = isActive ? 'active' : '';
-        
-        var detailActive = isActive ? '' : 'active';
+        let isHomeActive = this.props.history.location.pathname === "/";
+        var homeActive = isHomeActive ? 'active' : '';
+        let isDetailActive = this.props.history.location.pathname.includes("detail")
+        var detailActive = isDetailActive ? 'active' : '';
+        let isDeletedActive = this.props.history.location.pathname.includes("deleted")
+        var deletedActive = isDeletedActive ? 'active' : '';
 
         return(
             <nav className="navbar navbar-default">
@@ -38,9 +43,11 @@ class Header extends React.Component{
                         </li>
                         <li className= {detailActive}>
                             <a className="btn btn-secondary" onClick={this.detailOnClick}> 
-                                <span className="glyphicon glyphicon-th fa-3x"></span>
+                                <span className="glyphicon glyphicon-shopping-cart fa-3x"></span>
                             </a>
                         </li>
+
+                        
                         
                     </ul>
                     

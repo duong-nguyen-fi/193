@@ -29,10 +29,11 @@
     <title>Bach tuoc 193</title>
     <script>
         
-    function promptForNumberInput(callback){
+    function promptForNumberInput(message, callback){
       window.promptResult = null;
           bootbox.prompt({
-          title: "Nhap so luong",
+          title: message,
+          backdrop: true,
           inputType: 'number',
           callback: (result) =>{
               console.log(result);
@@ -42,6 +43,38 @@
       });
     }
 
+    function customAlert(message)
+    {
+      bootbox.alert({ 
+      size: "small",
+      title: "Chú Ý",
+      backdrop: true,
+      message: message
+      })
+    }
+
+    function customConfirm(message, callback){
+      bootbox.confirm({ 
+      size: "large",
+      message: message,
+      backdrop: true, 
+      buttons: {
+        confirm: {
+            label: 'Xác Nhận',
+            className: 'btn-danger btn-lg'
+        },
+        cancel: {
+            label: 'Không',
+            className: 'btn-default btn-lg'
+        }
+    },
+      callback: (result) =>{
+              console.log(result);
+              callback(result);
+        //true = OK, false = cancle
+      }
+})
+    }
     
     </script>
   </head>

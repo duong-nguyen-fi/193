@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import TableCard from '../TableCard/TableCard';
 import './TableListing.css'
-import AlertMessage from './../../Shared/MessageBox/AlertMessage';
 import firebase from '../../Database/Firestore'
+import FloatingButton from './../../Shared/FloatingButton/FloatingButton'
 
 export default class TableListing extends React.Component {
     
@@ -15,14 +15,8 @@ export default class TableListing extends React.Component {
             loading: true,
             message: ""
         }
+        this.filter="New";
         this.tableNumbers =[];
-    }
-
-    showMessge = () =>{
-        if(this.state.message == "")
-            return ;
-        else
-            return (<AlertMessage message={this.state.message} click={this.closeMessage()}/>);
     }
 
     closeMessage = () =>{
@@ -30,40 +24,42 @@ export default class TableListing extends React.Component {
     }
 
     newTable = () => {
-        console.log(this.state.tables.length+" size after add");
-        this.state.tables.length =0;
-        console.log(this.state.tables.length +" size after empty out");
-        var tableNumber = prompt("Nhap so ban");
-        if (tableNumber == null || tableNumber == "" || isNaN(tableNumber))
-            alert("Hay nhap so ban");
-        else if(this.tableNumbers.includes(Number(tableNumber)))
-            alert("Ban nay da ton tai");
-        else
-        {
-            const db = firebase.firestore();
-            var tableref = db.collection('tables').add({
-                active: true,
-                number: Number(tableNumber),
-                orders: [],
-                total: 0,
-                checkin: firebase.firestore.Timestamp.fromDate(new Date()),
-                checkout: null
-            })
-            .then( (docRef) =>{
-                console.log(docRef.id);
-            })
-        }
-        
-        
+        window.promptForNumberInput("Nhập số bàn mới",(tableNumber) =>{
+            if (tableNumber === null)
+                return;
+            else if (isNaN(tableNumber) || tableNumber<=0)
+                alert("Hãy nhập lại số bàn");
+            else if(this.tableNumbers.includes(Number(tableNumber)))
+                alert("Bàn này đã tồn tại");
+            else
+            {
+                const db = firebase.firestore();
+                var tableref = db.collection('tables').add({
+                    active: true,
+                    number: Number(tableNumber),
+                    orders: [],
+                    total: 0,
+                    checkin: firebase.firestore.Timestamp.fromDate(new Date()),
+                    checkout: null,
+                    status: "New"
+                })
+                .then( (docRef) =>{
+                    console.log(docRef.id);
+                })
+            }
+        });
         //this.getTablesData();
     }
 
 
 
     getTablesData = () => {
-        
+        if(this.props.history.location.pathname.includes('deleted'))
+        {
+            this.filter = 'Deleted';
+        }
         const db = firebase.firestore();
-        var tableref = db.collection('tables').where('active','==',true)
+        var tableref = db.collection('tables').where('status','==',this.filter)
             .onSnapshot(querySnapshot => {
                 this.setState({loading: true})
                 this.tables.length = 0;
@@ -106,7 +102,6 @@ export default class TableListing extends React.Component {
     componentDidMount(){
         console.log("did mount");
         //this.getTablesData();
-        
     }  
 
     componentWillMount(){
@@ -116,7 +111,11 @@ export default class TableListing extends React.Component {
     renderTables(){
 
         console.log("render now. Tables state length: "+ this.state.tables.length);
-        return this.state.tables.map((table) => {
+        var sortedTables =[...this.state.tables];
+        //sortedTables.sort((a,b) => b.values.checkin.seconds - a.values.checkin.seconds );
+        sortedTables.sort((a,b) => a.values.number - b.values.number );
+        console.log(sortedTables);
+        return sortedTables.map((table) => {
           return (
                     <TableCard tableData={table.values} clicked={ (e) => {this.onTableClick(e, table)}} key={table.key}/>
                     
@@ -130,6 +129,13 @@ export default class TableListing extends React.Component {
         this.props.history.push("/detail/"+table.key);    
     }
 
+    displayNewButton = () =>{
+        if(this.filter == 'New')
+        return (<i className="float" onClick={ this.newTable}>
+        <span  className="fa fa-4x">+</span>
+      </i>)
+    }
+
 
     render(){
         if(this.state.loading){
@@ -138,15 +144,16 @@ export default class TableListing extends React.Component {
         else
         return (
         <section>
-            {this.showMessge()}
-          <h1 className='page-title'>Danh Sach Ban</h1>
-          <h2> So Luong Ban: {this.state.tables.length} </h2>
+            
+          <h1 className='page-title'>Danh Sách Bàn</h1>
+          <h2> Số Lượng Bàn: {this.state.tables.length} </h2>
           <div className='row'>
             {this.renderTables()}
+           
           </div>
-          <a className="float" onClick={ this.newTable}>
-            <span  className="fa fa-4x">+</span>
-          </a>
+
+          {this.displayNewButton()}
+          
           
         </section>
             

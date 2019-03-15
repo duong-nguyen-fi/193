@@ -261,6 +261,29 @@ class TableDetail extends React.Component {
 
     onCheckTableClick = ()=>{
         console.log("Check please");
+
+        var message = "<div><h2> Thanh Toan ban nay?</h2></p>";
+        window.customConfirm(message, (result)=>{
+            console.log(result);
+            if(result === true)
+            {
+                this.setState({loading: true});
+                        const db = firebase.firestore();
+                        var tableref = db.collection('tables').doc(this.id);
+                        tableref.update({status: "Checked"})
+                            .then( () =>{
+                                tableref.update({active: false});
+
+                                console.log("Table is checked "+this.state.number);
+                                this.setState({loading: false});
+                                console.log(this.props.history);
+                                this.props.history.push("/listing/New"); 
+                            //this.props.history.goBack();
+                                
+                            });
+
+            }
+        })
     }
 
     onDeleteTableClick = () =>{

@@ -12,7 +12,7 @@ class Header extends React.Component{
             console.log(this.props.history);
         else
         {
-            this.props.history.push("/");
+            this.props.history.push("/listing/New");
         }
             
     }
@@ -30,14 +30,14 @@ class Header extends React.Component{
             <nav className="navbar navbar-default">
                 <div className="container-fluid ">
                     <div className="navbar-header ">
-                        <Link className="navbar-brand col-md-6 col-sm-6 col-xs-6" to="/">BachTuocNuong193</Link>
+                        <Link className="navbar-brand col-md-6 col-sm-6 col-xs-6" to="/listing/New">BachTuocNuong193</Link>
                         
                     </div>
                     
                     <ul className="nav navbar-nav navbar-right">
                         
                         <li className = {homeActive}>
-                            <Link className="btn btn-secondary" to="/">
+                            <Link className="btn btn-secondary" to="/listing/New">
                             <span className="glyphicon glyphicon-home fa-3x"></span>
                             </Link>
                         </li>

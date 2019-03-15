@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import TableCard from '../TableCard/TableCard';
 import './TableListing.css'
 import firebase from '../../Database/Firestore'
-import FloatingButton from './../../Shared/FloatingButton/FloatingButton'
+import {withRouter} from 'react-router-dom'
 
-export default class TableListing extends React.Component {
+class TableListing extends React.Component {
     
     constructor(){
         super();
@@ -15,7 +15,13 @@ export default class TableListing extends React.Component {
             loading: true,
             message: ""
         }
-        this.filter="New";
+        
+        this.statusSelector ={
+            'New': 'Chưa Thanh Toán',
+            'Checked': 'Đã Thanh Toán',
+            'Deleted': 'Đã Xóa'
+        }
+
         this.tableNumbers =[];
     }
 
@@ -54,10 +60,7 @@ export default class TableListing extends React.Component {
 
 
     getTablesData = () => {
-        if(this.props.history.location.pathname.includes('deleted'))
-        {
-            this.filter = 'Deleted';
-        }
+        console.log(this.filter);
         const db = firebase.firestore();
         var tableref = db.collection('tables').where('status','==',this.filter)
             .onSnapshot(querySnapshot => {
@@ -97,20 +100,23 @@ export default class TableListing extends React.Component {
     componentWillUpdate(){
         console.log("component will update");
         console.log(this.state.tables.length);
+        const {status} = this.props.match.params;
+        this.filter = status;
     }
 
     componentDidMount(){
         console.log("did mount");
         //this.getTablesData();
+        this.getTablesData();  
     }  
 
     componentWillMount(){
-        console.log("will mount");
-        this.getTablesData();
+        console.log("will mount");      
+        const {status} = this.props.match.params;
+        this.filter = status;
     }
     renderTables(){
-
-        console.log("render now. Tables state length: "+ this.state.tables.length);
+        console.log("render now. Tables state length: "+ this.state.tables.length + " Status: "+ this.filter);
         var sortedTables =[...this.state.tables];
         //sortedTables.sort((a,b) => b.values.checkin.seconds - a.values.checkin.seconds );
         sortedTables.sort((a,b) => a.values.number - b.values.number );
@@ -123,6 +129,29 @@ export default class TableListing extends React.Component {
         })
     }
 
+    selectorOnChanged = (e) =>{
+        console.log("Should show "+ e.target.value);
+        this.filter = e.target.value;
+        this.props.history.push("/listing/"+e.target.value); 
+        window.location.reload()
+    }
+
+    renderStatusSelector(){
+
+
+        return (
+            <div>
+                <h3>Phân Loại Bàn</h3>
+                <select className="browser-default custom-select form-control input-lg" onChange={(e) => this.selectorOnChanged(e)}>
+                    <option selected>   </option>
+                    <option value="New">{this.statusSelector.New}</option>
+                    <option value="Deleted">{this.statusSelector.Deleted}</option>
+                    <option value="Checked">{this.statusSelector.Checked}</option>
+                </select>
+            </div>
+        );
+    }
+
     onTableClick = (e, table) =>{
         //e.preventDefault();
         //console.log(table);
@@ -130,7 +159,7 @@ export default class TableListing extends React.Component {
     }
 
     displayNewButton = () =>{
-        if(this.filter == 'New')
+        if(this.filter === 'New')
         return (<i className="float" onClick={ this.newTable}>
         <span  className="fa fa-4x">+</span>
       </i>)
@@ -138,16 +167,39 @@ export default class TableListing extends React.Component {
 
 
     render(){
+        var status = "";
+
+        switch(this.filter) {
+            case 'New':
+              // code block
+              status = this.statusSelector.New;
+              break;
+            case 'Checked':
+              // code block
+              status = this.statusSelector.Checked;
+              break;
+            case 'Deleted':
+              // code block
+              status = this.statusSelector.Deleted;
+              break;
+            default:
+              // code block
+              status = "default";
+          }
+
         if(this.state.loading){
             return (<div className="loader"/>)
         }
         else
         return (
         <section>
-            
-          <h1 className='page-title'>Danh Sách Bàn</h1>
+            {this.renderStatusSelector()}
+          <h1 className='page-title'>Danh Sách Bàn 
+            <span style={{color: 'red'}}> {status}</span>
+          </h1>
           <h2> Số Lượng Bàn: {this.state.tables.length} </h2>
           <div className='row'>
+            
             {this.renderTables()}
            
           </div>
@@ -160,3 +212,5 @@ export default class TableListing extends React.Component {
         );
     }
 }
+
+export default withRouter(TableListing);

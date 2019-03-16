@@ -12,7 +12,7 @@ class Header extends React.Component{
             console.log(this.props.history);
         else
         {
-            this.props.history.push("/listing/New");
+            this.props.history.goBack();
         }
             
     }
@@ -23,8 +23,6 @@ class Header extends React.Component{
         var homeActive = isHomeActive ? 'active' : '';
         let isDetailActive = this.props.history.location.pathname.includes("detail")
         var detailActive = isDetailActive ? 'active' : '';
-        let isDeletedActive = this.props.history.location.pathname.includes("deleted")
-        var deletedActive = isDeletedActive ? 'active' : '';
 
         return(
             <nav className="navbar navbar-default">

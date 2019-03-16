@@ -12,8 +12,7 @@ class TableListing extends React.Component {
         this.state = {
             selectedTableId: null,
             tables: [],
-            loading: true,
-            message: ""
+            loading: true
         }
         
         this.statusSelector ={
@@ -23,10 +22,6 @@ class TableListing extends React.Component {
         }
 
         this.tableNumbers =[];
-    }
-
-    closeMessage = () =>{
-        this.setState({message: ""});
     }
 
     newTable = () => {
@@ -60,9 +55,11 @@ class TableListing extends React.Component {
 
 
     getTablesData = () => {
+        
+        this.setState({loading: true})
         console.log(this.filter);
         const db = firebase.firestore();
-        var tableref = db.collection('tables').where('status','==',this.filter)
+        var tableref = db.collection('tables').where('status','==',this.filter).where('checkin','>',firebase.firestore.Timestamp.fromDate(window.getDateOfThisDay(new Date())))
             .onSnapshot(querySnapshot => {
                 this.setState({loading: true})
                 this.tables.length = 0;
@@ -86,6 +83,7 @@ class TableListing extends React.Component {
             //console.log("state changed");
           }, err => {
             console.log(`Encountered error: ${err}`);
+            window.location.reload();
           });
 
           
@@ -133,7 +131,8 @@ class TableListing extends React.Component {
         console.log("Should show "+ e.target.value);
         this.filter = e.target.value;
         this.props.history.push("/listing/"+e.target.value); 
-        window.location.reload()
+        this.setState({tables: []});
+        this.getTablesData();
     }
 
     renderStatusSelector(){
@@ -142,8 +141,8 @@ class TableListing extends React.Component {
         return (
             <div>
                 <h3>Phân Loại Bàn</h3>
-                <select className="browser-default custom-select form-control input-lg" onChange={(e) => this.selectorOnChanged(e)}>
-                    <option selected>   </option>
+                <select className="browser-default custom-select form-control input-lg" onChange={(e) => this.selectorOnChanged(e)} >
+                    <option value="" selected disabled hidden> Hãy Chọn  </option>
                     <option value="New">{this.statusSelector.New}</option>
                     <option value="Deleted">{this.statusSelector.Deleted}</option>
                     <option value="Checked">{this.statusSelector.Checked}</option>
